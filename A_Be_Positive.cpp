@@ -10,6 +10,7 @@ using namespace std;
 #define MOD 1000000007
 #define f first
 #define s second
+#define pb push_back
 #define out(valid) cout << (valid ? "YES\n" : "NO\n")
 
 const int x4[4] = {-1, 0, 1, 0}, y4[4] = {0, 1, 0, -1};
@@ -17,26 +18,30 @@ const int x8[8] = {-1, -1, 0, 1, 1, 1, 0, -1}, y8[8] = {0, 1, 1, 1, 0, -1, -1, -
 
 int32_t main()
 {
-    int n;
-    cin >> n;
-    vector<int> v(n);
-    for (auto &e : v)
-        cin >> e;
-
-    set<int> ans;
-    for (auto e : v)
+    int t;
+    cin >> t;
+    while (t--)
     {
-        auto itr = ans.lower_bound(e);
-        if (itr == ans.end())
-            ans.insert(e);
-        else
+        int n;
+        cin >> n;
+        vector<int> v(n);
+
+        int one = 0, zero = 0, mone = 0;
+
+        for (auto &e : v)
         {
-            ans.erase(itr);
-            ans.insert(e);
+            cin >> e;
+            if (e == 0)
+                zero++;
+            else if (e == 1)
+                one++;
+            else
+                mone++;
         }
+
+        int ans = zero + (mone % 2) * 2;
+
+        cout << ans << endl;
     }
-
-    cout << ans.size();
-
     return 0;
 }

@@ -10,29 +10,48 @@ using namespace std;
 #define MOD 1000000007
 #define f first
 #define s second
+#define pb push_back
 #define out(valid) cout << (valid ? "YES\n" : "NO\n")
 
 const int x4[4] = {-1, 0, 1, 0}, y4[4] = {0, 1, 0, -1};
 const int x8[8] = {-1, -1, 0, 1, 1, 1, 0, -1}, y8[8] = {0, 1, 1, 1, 0, -1, -1, -1};
 
-int solve(int n, int m, int mask) {
-    if(m < 0)
-        return (mask == 0);
-
-    map<int, int> mp;
-    for(int i = 0; i < (1 << n); i++) {
-        
-    }
-}
-
 int32_t main()
 {
-    int n, m;
-    cin >> n >> m;
+    string s;
 
-    map<int, int> mp;
-    mp[0] = 1;
-    
+    cin >> s;
+
+    string ans = "";
+    sort(s.begin(), s.end());
+
+    set<char> st;
+    int i = 0, j = 0, k = 0;
+    char lastChar = '\0';
+
+    map<char, int> fq;
+    bool valid = true;
+    for(auto e : s)
+    {
+        fq[e]++;
+        if(fq[e] )
+    }
+
+    while(i < n) {
+        if(s[i] != lastChar) {
+
+        }
+    }
 
     return 0;
 }
+
+/*
+
+HATTIVATTI
+AAHIITTTTV
+
+AHATITITVT
+
+
+*/
