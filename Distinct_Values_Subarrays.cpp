@@ -17,22 +17,29 @@ const int x8[8] = {-1, -1, 0, 1, 1, 1, 0, -1}, y8[8] = {0, 1, 1, 1, 0, -1, -1, -
 
 int32_t main()
 {
-    int n, k, sum = 0, ans = 0;
-    cin >> n >> k;
-
+    int n;
+    cin >> n;
+    vector<int> v(n);
     map<int, int> freq;
-    freq[0] = 1;
-
     for (int i = 0; i < n; i++)
+        cin >> v[i];
+
+    int ans = 0, i = 0, j = 0;
+
+    while (j < n)
     {
-        int val;
-        cin >> val;
-        sum += val;
-        ans += freq[sum - k];
-        freq[sum]++;
+        freq[v[j]]++;
+        while (freq[v[j]] == 2)
+        {
+            freq[v[i]]--;
+            i++;
+        }
+        j++;
+
+        int len = j-i;
+        ans += len;
     }
 
     cout << ans << endl;
-
     return 0;
 }

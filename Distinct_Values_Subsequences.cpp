@@ -10,6 +10,7 @@ using namespace std;
 #define MOD 1000000007
 #define f first
 #define s second
+#define pb push_back
 #define out(valid) cout << (valid ? "YES\n" : "NO\n")
 
 const int x4[4] = {-1, 0, 1, 0}, y4[4] = {0, 1, 0, -1};
@@ -17,22 +18,21 @@ const int x8[8] = {-1, -1, 0, 1, 1, 1, 0, -1}, y8[8] = {0, 1, 1, 1, 0, -1, -1, -
 
 int32_t main()
 {
-    int n, k, sum = 0, ans = 0;
-    cin >> n >> k;
+    int n;
+    cin >> n;
 
-    map<int, int> freq;
-    freq[0] = 1;
-
+    map<int, int> f;
     for (int i = 0; i < n; i++)
     {
         int val;
         cin >> val;
-        sum += val;
-        ans += freq[sum - k];
-        freq[sum]++;
+        f[val]++;
     }
 
-    cout << ans << endl;
+    int ans = 1;
+    for (auto e : f)
+        (ans *= e.second + 1) %= MOD;
 
+    cout << ans - 1;
     return 0;
 }

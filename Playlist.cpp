@@ -20,28 +20,25 @@ int32_t main()
     int n;
     cin >> n;
     vector<int> v(n);
-    um<int, int> freq;
+    map<int, int> freq;
     for (int i = 0; i < n; i++)
-    {
         cin >> v[i];
-    }
 
-    int ans = 0, len = 0, i = 0, j = 0;
+    int ans = 0, i = 0, j = 0;
+
     while (j < n)
     {
-        if (freq[v[j]] == 1)
+        freq[v[j]]++;
+        while (freq[v[j]] == 2)
         {
             freq[v[i]]--;
-            len--;
             i++;
-            continue;
         }
-
-        freq[v[j]]++;
         j++;
-        len++;
-        ans = max(ans, len);
+
+        ans = max(ans, j - i);
     }
+
     cout << ans << endl;
     return 0;
 }
