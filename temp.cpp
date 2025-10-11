@@ -6,6 +6,7 @@ bool is_adjacent(char A, char B)
     return (abs(A - B) == 1); // 'A' 'B' and 'B' 'A' etc
 }
 
+
 void move_disks(int n, char source, char destination)
 {
     if (n == 0 || source == destination)
