@@ -1,8 +1,8 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
 #define int long long int
-#define rep(i, a, b) for (auto i = a; i < b; i++)
+#define rep(i, a, b) for(auto i = a; i < b; i++)
 #define reprev(i, a, b) for (auto i = a; i >= b; i--)
 #define endl '\n'
 #define mp make_pair
@@ -51,55 +51,70 @@ int query(vector<int> &tree, int start, int end, int left, int right, int node)
 
 void printSegTree(vector<int> &tree)
 {
-    for (int i = 0; i < tree.size(); i++)
+    for(int i = 0 ; i < tree.size(); i++)
     {
         cout << tree[i] << ' ';
-        if (((i + 1) & (i + 2)) == 0)
+        if(((i + 1) & (i + 2)) == 0)
             cout << endl;
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
-{
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
-
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
-}
-
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
-    for (auto tc = 1; tc <= t; tc++)
+    for(auto tc = 1; tc <= t; tc++)
     {
         cin >> n;
         vector<int> v(n);
-        for (auto &e : v)
+        for(auto &e : v)
             cin >> e;
+        int i = 0, j = n-1;
+        bool valid = true;
+        while(i < j) {
+            valid &= (v[i] == v[j]);
+            i++, j--;
+        }
 
-        vector<vector<int>> right(n);
+        if(valid)
+        {
+            out(1);
+            continue;
+        }
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+        valid = true;
+        i = 0, j = n-1;
+        while(i <= j) {
+            if(abs(v[i] - v[j]) != 2)
+                valid = false;
+            i++, j--;
+        }
 
-        vector<int> dp(n, -1);
+        if(!valid)
+        {
+            out(0);
+            continue;
+        }
 
-        int ans = solve(v, 0, right, dp);
+        int left = 1, right = 1e9;
+        i = 0, j = n-1;
+        valid = true;
+        while(i < j) {
+            int U = v[i], V = v[j];
+            i++, j--;
+            if(U == V)
+                continue;
+            if(U > V)
+                swap(U, V);
 
-        out(ans);
+            left = max(left, U);
+            right = min(right, V-1);
+        }
+
+        out(left <= right);
     }
     return 0;
 }

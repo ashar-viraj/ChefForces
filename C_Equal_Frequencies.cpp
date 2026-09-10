@@ -59,23 +59,34 @@ void printSegTree(vector<int> &tree)
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
+int getAns(string s, string &t, vector<bool> &taken)
 {
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
+    int len = 0, ans = 0, n = s.size();
+    for (int i = 0; i < n; i++)
+    {
+        if (taken[s[i] - 'a'] || s[i] == t[i])
+            len++;
+        else
+            len = 0;
+        ans += len;
+    }
 
-    if (dp[i] != -1)
-        return dp[i];
+    return ans;
+}
 
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
+int solve(string &s, string &t, int k, vector<char> unique, int uniqueIdx, vector<bool> &taken, int replaced)
+{
+    if(uniqueIdx == unique.size())
+        return -1;
+    if (replaced == k)
+        return getAns(s, t, taken);
 
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
+    int exclude = solve(s, t, k, unique, uniqueIdx+1, taken, replaced);
+    taken[unique[uniqueIdx] - 'a'] = true;
+    int include = solve(s, t, k, unique, uniqueIdx+1, taken, replaced + 1);
+    taken[unique[uniqueIdx] - 'a'] = false;
 
-    return dp[i] = (leftPoss || rightPoss);
+    return max(include, exclude);
 }
 
 int32_t main()
@@ -85,21 +96,19 @@ int32_t main()
     for (auto tc = 1; tc <= t; tc++)
     {
         cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
-            cin >> e;
+        string s, t;
+        cin >> s >> t;
 
-        vector<vector<int>> right(n);
+        vector<bool> taken(26, false);
+        set<char> uniqueS;
+        for(auto e : s)
+            uniqueS.insert(e);
+        vector<char> unique;
+        for(auto e : uniqueS)
+            unique.push_back(e);
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+        int ans = solve(s, t)
 
-        vector<int> dp(n, -1);
-
-        int ans = solve(v, 0, right, dp);
-
-        out(ans);
     }
     return 0;
 }

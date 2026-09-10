@@ -1,8 +1,8 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
 #define int long long int
-#define rep(i, a, b) for (auto i = a; i < b; i++)
+#define rep(i, a, b) for(auto i = a; i < b; i++)
 #define reprev(i, a, b) for (auto i = a; i >= b; i--)
 #define endl '\n'
 #define mp make_pair
@@ -51,55 +51,52 @@ int query(vector<int> &tree, int start, int end, int left, int right, int node)
 
 void printSegTree(vector<int> &tree)
 {
-    for (int i = 0; i < tree.size(); i++)
+    for(int i = 0 ; i < tree.size(); i++)
     {
         cout << tree[i] << ' ';
-        if (((i + 1) & (i + 2)) == 0)
+        if(((i + 1) & (i + 2)) == 0)
             cout << endl;
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
-{
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
-
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
-}
-
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
-    for (auto tc = 1; tc <= t; tc++)
+    for(auto tc = 1; tc <= t; tc++)
     {
-        cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
-            cin >> e;
+        cin >> n >> m;
+        string s, t;
+        cin >> s >> t;
+        vector<int> zz(n+1, 0);
+        vector<int> zo(n+1, 0);
+        vector<int> oz(n+1, 0);
+        vector<int> oo(n+1, 0);
 
-        vector<vector<int>> right(n);
+        for(int i = 1; i <= n; i++) {
+            zz[i] = zz[i-1];
+            zo[i] = zo[i-1];
+            oz[i] = oz[i-1];
+            oo[i] = oo[i-1];
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+            if(s[i-1] == '0' && t[i-1] == '0') zz[i]++;
+            if(s[i-1] == '0' && t[i-1] == '1') zo[i]++;
+            if(s[i-1] == '1' && t[i-1] == '0') oz[i]++;
+            if(s[i-1] == '1' && t[i-1] == '1') oo[i]++;
+        }
 
-        vector<int> dp(n, -1);
+        for(int i = 0; i < m; i++) {
+            int u, v;
+            cin >> u >> v;
 
-        int ans = solve(v, 0, right, dp);
+            int need = abs((zo[v] - zo[u-1]) - (oz[v] - oz[u-1]));
+            int avail = zz[v] - zz[u-1] + oo[v] - oo[u-1];
 
-        out(ans);
+            out(avail >= need);
+        }
     }
     return 0;
 }

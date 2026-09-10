@@ -59,47 +59,89 @@ void printSegTree(vector<int> &tree)
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
+bool solve(vector<int> v, int startIdx, int val, map<int, int> freq)
 {
-    if (i > v.size())
+    int i = startIdx, j = 0, swaps = 0;
+    queue<int> idx;
+    for (int i = 0; i < v.size(); i++)
+    {
+        if (v[i] == val && (i < startIdx || i >= startIdx + freq[val]))
+            idx.push(i);
+    }
+
+    for (int i = startIdx; i < startIdx + freq[val] && i < v.size(); i++)
+    {
+        if (v[i] != val)
+        {
+            swaps++;
+            swap(v[i], v[idx.front()]);
+        }
+    }
+
+    if (swaps > 1)
         return false;
-    if (i == v.size())
-        return true;
 
-    if (dp[i] != -1)
-        return dp[i];
+    map<int, int> firstIdx, lastIdx;
+    for (int i = 0; i < v.size(); i++)
+    {
+        if (!firstIdx.count(v[i]))
+            firstIdx[v[i]] = i;
+        lastIdx[v[i]] = i;
+    }
 
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
+    for (auto e : v)
+    {
+        if (freq[e] != (lastIdx[e] - firstIdx[e] + 1))
+            return false;
+    }
 
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
+    return true;
 }
 
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
     for (auto tc = 1; tc <= t; tc++)
     {
         cin >> n;
         vector<int> v(n);
+        map<int, int> freq, firstIdx, lastIdx;
+        int val = -1;
         for (auto &e : v)
+        {
             cin >> e;
-
-        vector<vector<int>> right(n);
+            freq[e]++;
+        }
 
         for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+        {
+            if (!firstIdx.count(v[i]))
+                firstIdx[v[i]] = i;
+            lastIdx[v[i]] = i;
+        }
 
-        vector<int> dp(n, -1);
+        for (auto e : v)
+        {
+            if (freq[e] != (lastIdx[e] - firstIdx[e] + 1))
+            {
+                val = e;
+                break;
+            }
+        }
 
-        int ans = solve(v, 0, right, dp);
 
-        out(ans);
+        out((val == -1) ||
+            (val != -1 && (solve(v, firstIdx[val] - 1, val, freq) ||
+                            solve(v, firstIdx[val], val, freq) ||
+                            solve(v, firstIdx[val] + 1, val, freq) ||
+                            solve(v, lastIdx[val] - freq[val] + 1, val, freq) ||
+                            solve(v, lastIdx[val] - freq[val] + 2, val, freq) ||
+                            solve(v, lastIdx[val] - freq[val], val, freq)))
+            );
     }
     return 0;
 }

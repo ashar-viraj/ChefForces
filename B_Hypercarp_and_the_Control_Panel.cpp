@@ -59,47 +59,68 @@ void printSegTree(vector<int> &tree)
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
-{
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
-
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
-}
-
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
     for (auto tc = 1; tc <= t; tc++)
     {
         cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
+        vector<int> a(n);
+
+        for (auto &e : a)
             cin >> e;
 
-        vector<vector<int>> right(n);
+        vector<vector<int>> v;
+        int len = 0, curr = a[0];
+        for (auto e : a)
+        {
+            if (e == curr)
+                len++;
+            else
+            {
+                v.push_back({curr, len});
+                len = 1;
+                curr = e;
+            }
+        }
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+        v.push_back({curr, len});
 
-        vector<int> dp(n, -1);
+        bool isTwoAdj = false;
+        for (int i = 1; i < v.size(); i++)
+            if (v[i][1] > 1 && v[i - 1][1] > 1)
+                isTwoAdj = true;
 
-        int ans = solve(v, 0, right, dp);
+        if (isTwoAdj)
+        {
+            cout << v.size() + 2 << endl;
+            continue;
+        }
 
-        out(ans);
+        if (v.size() == 1)
+        {
+            cout << "1\n";
+            continue;
+        }
+        bool canSwap = false;
+        for (int i = 0; i < v.size(); i++)
+        {
+            if(i == 1 && v[i][1] != 1)
+                canSwap = true;
+            if(i == v.size() - 2 && v[i][1] != 1)
+                canSwap = true;
+            if(v[i][1] == 1)
+                continue;
+            if (i - 2 >= 0 && v[i - 2][0] != v[i][0])
+                canSwap = true;
+            if (i + 2 < v.size() && v[i + 2][0] != v[i][0])
+                canSwap = true;
+        }
+        cout << v.size() + canSwap << endl;
     }
     return 0;
 }

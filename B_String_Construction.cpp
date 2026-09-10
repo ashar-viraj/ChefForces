@@ -59,47 +59,39 @@ void printSegTree(vector<int> &tree)
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
-{
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
-
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
-}
-
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
     for (auto tc = 1; tc <= t; tc++)
     {
-        cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
-            cin >> e;
+        int k;
+        cin >> n >> k;
+        if (k > n - 2)
+        {
+            cout << -1 << endl;
+            continue;
+        }
 
-        vector<vector<int>> right(n);
+        int zeroes = k / 2, ones = (k + 1) / 2;
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+        string s = "";
+        for (int i = 0; i <= zeroes; i++)
+            s += "0";
+        for (int i = 0; i <= ones; i++)
+            s += "1";
 
-        vector<int> dp(n, -1);
-
-        int ans = solve(v, 0, right, dp);
-
-        out(ans);
+        while (s.size() < n)
+        {
+            if (s.back() == '0')
+                s += "1";
+            else
+                s += "0";
+        }
+        cout << s << endl;
     }
     return 0;
 }

@@ -59,47 +59,64 @@ void printSegTree(vector<int> &tree)
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
+int solve(vector<vector<int>> &al,
+          vector<vector<int>> &range,
+          int curr,
+          int isRight,
+          int par,
+          vector<bool> &vis,
+          vector<vector<int>> &dp)
 {
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
+    if (dp[curr][isRight] != -1)
+        return dp[curr][isRight];
 
-    if (dp[i] != -1)
-        return dp[i];
+    int ans = 0;
 
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
+    for (auto e : al[curr])
+    {
+        if (e == par)
+            continue;
+        int ans1 = abs(range[curr][isRight] - range[e][0]) + solve(al, range, e, 0, curr, vis, dp);
+        int ans2 = abs(range[curr][isRight] - range[e][1]) + solve(al, range, e, 1, curr, vis, dp);
 
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
+        ans += max(ans1, ans2);
+    }
 
-    return dp[i] = (leftPoss || rightPoss);
+    return dp[curr][isRight] = ans;
 }
 
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
     for (auto tc = 1; tc <= t; tc++)
     {
         cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
-            cin >> e;
+        vector<vector<int>> range(n, vector<int>(2)), dp(n, vector<int>(2, -1));
+        for (auto &e : range)
+            cin >> e[0] >> e[1];
 
-        vector<vector<int>> right(n);
+        vector<vector<int>> al(n);
+        for (int i = 1; i < n; i++)
+        {
+            int u, v;
+            cin >> u >> v;
+            u--, v--;
+            al[u].push_back(v);
+            al[v].push_back(u);
+        }
+
+        vector<bool> vis(n, false);
 
         for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
-
-        vector<int> dp(n, -1);
-
-        int ans = solve(v, 0, right, dp);
-
-        out(ans);
+            if (al[i].size() == 1)
+            {
+                cout << max(solve(al, range, i, 0, -1, vis, dp), solve(al, range, i, 1, -1, vis, dp)) << endl;
+                break;
+            }
     }
     return 0;
 }

@@ -59,47 +59,60 @@ void printSegTree(vector<int> &tree)
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
+void setPrimeFactors(int N, map<int, vector<int>> &freq)
 {
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
-
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
+    int n = N, i = 3;
+    map<int, int> f;
+    while (n % 2 == 0)
+    {
+        n /= 2;
+        f[2]++;
+    }
+    while (i * i <= N)
+    {
+        while (n % i == 0)
+        {
+            f[i]++;
+            n /= i;
+        }
+        i += 2;
+    }
+    if (n > 1)
+        f[n]++;
+    for (auto e : f)
+        freq[e.first].push_back(e.second);
 }
 
 int32_t main()
 {
-    int t, i, j, n, m, itemp;
-    cin >> t;
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int t = 1, i, j, n, m, itemp;
+    // cin >> t;
     for (auto tc = 1; tc <= t; tc++)
     {
         cin >> n;
         vector<int> v(n);
+        vector<vector<int>> primeFact(200000);
+        map<int, vector<int>> freq;
         for (auto &e : v)
+        {
             cin >> e;
+            setPrimeFactors(e, freq);
+        }
 
-        vector<vector<int>> right(n);
+        int ans = 1;
+        for (auto &e : freq)
+        {
+            sort(e.second.begin(), e.second.end());
+            if(e.second.size() == n-1)
+                ans *= pow(e.first, e.second[0]);
+            else if(e.second.size() == n)
+                ans *= pow(e.first, e.second[1]);
+        }
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
-
-        vector<int> dp(n, -1);
-
-        int ans = solve(v, 0, right, dp);
-
-        out(ans);
+        cout << ans << endl;
     }
     return 0;
 }

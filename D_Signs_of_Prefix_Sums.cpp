@@ -1,8 +1,8 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
 #define int long long int
-#define rep(i, a, b) for (auto i = a; i < b; i++)
+#define rep(i, a, b) for(auto i = a; i < b; i++)
 #define reprev(i, a, b) for (auto i = a; i >= b; i--)
 #define endl '\n'
 #define mp make_pair
@@ -51,55 +51,70 @@ int query(vector<int> &tree, int start, int end, int left, int right, int node)
 
 void printSegTree(vector<int> &tree)
 {
-    for (int i = 0; i < tree.size(); i++)
+    for(int i = 0 ; i < tree.size(); i++)
     {
         cout << tree[i] << ' ';
-        if (((i + 1) & (i + 2)) == 0)
+        if(((i + 1) & (i + 2)) == 0)
             cout << endl;
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
-{
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
+int getAns(string &s, int k, int curr, int i, int n, vector<vector<int>> &dp) {
+    if(i == n)
+        return 1;
 
-    if (dp[i] != -1)
-        return dp[i];
+    if(abs(curr) > 5)
+        return 0;
 
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
+    if((s[i] == '0' && curr != 0) || (s[i] == '+' && curr <= 0) || (s[i] == '-' && curr >= 0))
+        return 0;
 
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
+    if(dp[i][curr + 5] != -1)
+        return dp[i][curr + 5];
 
-    return dp[i] = (leftPoss || rightPoss);
+    int ans = 0;
+    for(int j = -k; j <= k; j++) {
+        if(j != 0)
+            ans |= getAns(s, k, curr + j, i+1, n, dp);
+    }
+
+    return dp[i][curr + 5] = ans;
+}
+
+bool solve(string &s, int k) {
+    int n = s.size();
+    vector<vector<int>> dp(n, vector<int>(11, -1));
+
+    int ans = 0;
+    for(int curr = -k; curr <= k; curr++)
+        if(curr != 0)
+            ans |= getAns(s, k, curr, 0, n, dp);
+    return ans;
 }
 
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
-    for (auto tc = 1; tc <= t; tc++)
+    for(auto tc = 1; tc <= t; tc++)
     {
         cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
-            cin >> e;
+        string s;
+        cin >> s;
 
-        vector<vector<int>> right(n);
-
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
-
-        vector<int> dp(n, -1);
-
-        int ans = solve(v, 0, right, dp);
-
-        out(ans);
+        if(solve(s, 1))
+            cout << "1\n";
+        else if(solve(s, 2))
+            cout << "2\n";
+        else if(solve(s, 3))
+            cout << "3\n";
+        else if(solve(s, 4))
+            cout << "4\n";
+        else
+            cout << "-1\n";
     }
     return 0;
 }

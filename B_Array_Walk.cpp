@@ -28,25 +28,29 @@ int32_t main()
     {
         int k, z, ans = 0, sum = 0;
         cin >> n >> k >> z;
-        vector<int> v(n), pre;
-        for (auto &e : v) {
+        vector<int> v(n), pre(n);
+        for (auto &e : v)
             cin >> e;
-            sum += e;
-            pre.push_back(sum);
-        }
 
-        for (int i = 1; k-i >= 0; i++)
+        for(int i = 0; i < n; i++)
+            pre[i] = v[i] + (i-1 >= 0 ? pre[i-1] : 0);
+
+        sum = v[0], k--;
+        for (int i = 1; i < n && k >= 0; i++, k--)
         {
-            int back = z, front = i - back
+            sum += v[i];
+            if (z)
+            {
+                int left = min(z, (k + 1) / 2), right = min(z, k / 2);
+                int smallAns = sum + left * v[i-1] + right * v[i];
 
-            // sum += v[i];
-            // int remainStep = k - i;
-            // int r1 = (remainStep + 1) / 2, r2 = remainStep / 2;
-            // if (r1 <= z)
-            // {
-            //     cout << sum << ' ' << r1 << ' ' << v[i - 1] << ' ' << r2 << ' ' << v[i] << ' ' << sum + (r1 * v[i - 1]) + (r2 * v[i]) << endl;
-            //     ans = max(ans, sum + (r1 * v[i - 1]) + (r2 * v[i]));
-            // }
+                if(k > z*2)
+                    smallAns += pre[i+k - z*2] - pre[i];
+
+                ans = max(smallAns, ans);
+            }
+            if(k == 0)
+                ans = max(ans, sum);
         }
 
         cout << ans << endl;

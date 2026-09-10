@@ -19,30 +19,66 @@ const int x8[8] = {-1, -1, 0, 1, 1, 1, 0, -1}, y8[8] = {0, 1, 1, 1, 0, -1, -1, -
 int32_t main()
 {
     string s;
-
     cin >> s;
 
-    string ans = "";
-    sort(s.begin(), s.end());
-
-    set<char> st;
-    int i = 0, j = 0, k = 0;
-    char lastChar = '\0';
-
-    map<char, int> fq;
-    bool valid = true;
-    for(auto e : s)
-    {
-        fq[e]++;
-        if(fq[e] )
+    int ma = 0, n = s.size();
+    char ch;
+    map<char, int> f;
+    for(auto e : s) {
+        f[e]++;
+        ma = max(ma, f[e]);
+        if(ma == f[e])
+            ch = e;
     }
 
-    while(i < n) {
-        if(s[i] != lastChar) {
+    if(ma > (n+1)/2)
+    {
+        cout << "-1";
+        return 0;
+    }
 
+    string ans(n, ' ');
+    if(n%2 && ma == (n+1) / 2) {
+        for(int i = 0; i < n; i += 2) {
+            ans[i] = ch;
+            f[ch]--;
         }
     }
 
+    int i = 0, j = 0;
+    sort(s.begin(), s.end());
+    while(i < n) {
+        if(f[s[j]] == 0) {
+            j++;
+            continue;
+        }
+        if(ans[i] != ' ') {
+            i += 2;
+            continue;
+        }
+        ans[i] = s[j];
+        f[s[j]]--;
+        j++;
+        i+=2;
+    }
+
+    i = 1;
+    while(i < n) {
+        if(f[s[j]] == 0) {
+            j++;
+            continue;
+        }
+        if(ans[i] != ' ') {
+            i += 2;
+            continue;
+        }
+        ans[i] = s[j];
+        f[s[j]]--;
+        j++;
+        i+=2;
+    }
+
+    cout << s;
     return 0;
 }
 

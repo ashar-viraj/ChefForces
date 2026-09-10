@@ -1,8 +1,8 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
 #define int long long int
-#define rep(i, a, b) for (auto i = a; i < b; i++)
+#define rep(i, a, b) for(auto i = a; i < b; i++)
 #define reprev(i, a, b) for (auto i = a; i >= b; i--)
 #define endl '\n'
 #define mp make_pair
@@ -51,55 +51,63 @@ int query(vector<int> &tree, int start, int end, int left, int right, int node)
 
 void printSegTree(vector<int> &tree)
 {
-    for (int i = 0; i < tree.size(); i++)
+    for(int i = 0 ; i < tree.size(); i++)
     {
         cout << tree[i] << ' ';
-        if (((i + 1) & (i + 2)) == 0)
+        if(((i + 1) & (i + 2)) == 0)
             cout << endl;
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
-{
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
+void solve(int k, int x, int y, string &finalAns, int &dis) {
+    string ans = "";
+    while(k > 0) {
+        if(y >= x && y >= k) {
+            ans += "Y";
+            y -= k;
+            k--;
+        } else if(x >= k) {
+            ans += "X";
+            x -= k;
+            k--;
+        } else {
+            return;
+        }
+    }
 
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
+    if((x * x + y * y) < dis && k == 0)
+    {
+        finalAns = ans;
+        dis = x*x + y*y;
+    }
 }
 
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
-    for (auto tc = 1; tc <= t; tc++)
+    for(auto tc = 1; tc <= t; tc++)
     {
-        cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
-            cin >> e;
+        int x, y;
+        cin >> x >> y;
 
-        vector<vector<int>> right(n);
+        int k = 0, sum = 0;
+        while((sum + k + 1) <= (x + y)) {
+            k++;
+            sum += k;
+        }
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+        string ans = "";
+        int dis = LONG_MAX;
+        solve(k, x, y, ans, dis);
+        solve(k-1, x, y, ans, dis);
+        solve(k-2, x, y, ans, dis);
+        solve(k-3, x, y, ans, dis);
 
-        vector<int> dp(n, -1);
-
-        int ans = solve(v, 0, right, dp);
-
-        out(ans);
+        cout << ans << endl;
     }
     return 0;
 }

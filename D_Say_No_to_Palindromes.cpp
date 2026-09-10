@@ -59,47 +59,40 @@ void printSegTree(vector<int> &tree)
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
+void update(vector<int> &v, vector<vector<int>> &dp, vector<vector<int>> target)
 {
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
-
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
+    for (int k = 0; k < 6; k++)
+        for (int i = 1; i < v.size(); i++)
+            dp[k][i] = dp[k][i - 1] + (v[i] != target[k][i % 3]);
 }
 
 int32_t main()
 {
-    int t, i, j, n, m, itemp;
-    cin >> t;
+    int t = 1, i, j, n, m, itemp;
+    // cin >> t;
     for (auto tc = 1; tc <= t; tc++)
     {
-        cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
-            cin >> e;
-
-        vector<vector<int>> right(n);
-
+        cin >> n >> m;
+        string s;
+        cin >> s;
+        vector<int> v(n + 1);
         for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+            v[i + 1] = s[i] - 'a';
 
-        vector<int> dp(n, -1);
+        vector<vector<int>> dp(6, vector<int>(n + 1, 0));
 
-        int ans = solve(v, 0, right, dp);
+        update(v, dp, {{0, 1, 2}, {0, 2, 1}, {1, 0, 2}, {1, 2, 0}, {2, 0, 1}, {2, 1, 0}});
 
-        out(ans);
+        while (m--)
+        {
+            int l, r;
+            cin >> l >> r;
+            int ans = r - l + 1;
+            for (int i = 0; i < 6; i++)
+                ans = min(ans, dp[i][r] - dp[i][l - 1]);
+
+            cout << ans << endl;
+        }
     }
     return 0;
 }

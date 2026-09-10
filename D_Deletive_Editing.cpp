@@ -59,47 +59,54 @@ void printSegTree(vector<int> &tree)
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
-{
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
-
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
-}
-
 int32_t main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     int t, i, j, n, m, itemp;
     cin >> t;
     for (auto tc = 1; tc <= t; tc++)
     {
-        cin >> n;
-        vector<int> v(n);
-        for (auto &e : v)
-            cin >> e;
+        string s, t;
+        cin >> s >> t;
+        map<char, int> need, remain;
+        for (auto e : s)
+            remain[e]++;
+        for (auto e : t)
+            need[e]++;
 
-        vector<vector<int>> right(n);
+        int i = s.size() - 1, j = t.size() - 1;
+        bool valid = true;
+        while (i >= 0)
+        {
+            if (j >= 0 && s[i] == t[j])
+            {
+                remain[s[i]]--;
+                need[t[j]]--;
+                i--, j--;
+            }
+            else if (need[s[i]] == 0)
+            {
+                remain[s[i]]--;
+                i--;
+            }
+            else {
+                valid = false;
+                break;
+            }
+        }
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
+        for(auto e : need)
+            if(e.second)
+                valid = false;
 
-        vector<int> dp(n, -1);
-
-        int ans = solve(v, 0, right, dp);
-
-        out(ans);
+        out(valid);
     }
     return 0;
 }
+
+/*
+DEINSTITUTIONALIZATION
+D          ON    ATION
+*/

@@ -1,8 +1,8 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
 #define int long long int
-#define rep(i, a, b) for (auto i = a; i < b; i++)
+#define rep(i, a, b) for(auto i = a; i < b; i++)
 #define reprev(i, a, b) for (auto i = a; i >= b; i--)
 #define endl '\n'
 #define mp make_pair
@@ -51,55 +51,38 @@ int query(vector<int> &tree, int start, int end, int left, int right, int node)
 
 void printSegTree(vector<int> &tree)
 {
-    for (int i = 0; i < tree.size(); i++)
+    for(int i = 0 ; i < tree.size(); i++)
     {
         cout << tree[i] << ' ';
-        if (((i + 1) & (i + 2)) == 0)
+        if(((i + 1) & (i + 2)) == 0)
             cout << endl;
     }
 }
 
-bool solve(vector<int> &v, int i, vector<vector<int>> &right, vector<int> &dp)
-{
-    if (i > v.size())
-        return false;
-    if (i == v.size())
-        return true;
-
-    if (dp[i] != -1)
-        return dp[i];
-
-    bool leftPoss = solve(v, i + v[i] + 1, right, dp);
-
-    bool rightPoss = false;
-    for (auto e : right[i])
-        rightPoss |= solve(v, e + 1, right, dp);
-
-    return dp[i] = (leftPoss || rightPoss);
-}
-
 int32_t main()
 {
-    int t, i, j, n, m, itemp;
-    cin >> t;
-    for (auto tc = 1; tc <= t; tc++)
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int t = 1, i, j, n, m, itemp;
+    // cin >> t;
+    for(auto tc = 1; tc <= t; tc++)
     {
-        cin >> n;
+        cin >> n >> m;
         vector<int> v(n);
-        for (auto &e : v)
+        for(auto &e : v)
             cin >> e;
+        if(n > m) {
+            cout << "0\n";
+            return 0;
+        }
 
-        vector<vector<int>> right(n);
+        int ans = 1;
+        for(int i = 0; i < n; i++)
+            for(int j = i+1; j < n; j++)
+                (ans *= abs(v[i] - v[j])) %= m;
 
-        for (int i = 0; i < n; i++)
-            if (i - v[i] >= 0)
-                right[i - v[i]].push_back(i);
-
-        vector<int> dp(n, -1);
-
-        int ans = solve(v, 0, right, dp);
-
-        out(ans);
+        cout << ans << endl;
     }
     return 0;
 }
